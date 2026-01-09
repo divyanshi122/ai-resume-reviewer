@@ -1,45 +1,54 @@
 def get_resume_prompt(resume_text, job_role):
     prompt = f"""
-You are an advanced ATS (Applicant Tracking System).
+You are an enterprise-grade Applicant Tracking System (ATS).
 
-Your task is to evaluate how well this resume matches the job role: "{job_role}".
+Follow these steps carefully.
 
-Follow this process:
-1. First, list the 8–12 most important skills, tools, and keywords required for this job role.
-2. Then, scan the resume and find which of those skills are present.
-3. Penalize the score heavily if many required skills are missing.
-4. Be strict. Do not inflate scores.
+STEP 1 — Extract skills from the resume:
+From the resume below, extract all technical skills, tools, technologies, and domain keywords as a clean bullet list.
+
+STEP 2 — Extract skills for the job role:
+List the 8–12 most important skills required for the job role: "{job_role}".
+
+STEP 3 — Compare:
+Compare both lists and determine:
+- Matching skills
+- Missing skills
+
+STEP 4 — Score:
+Give a strict ATS Match Score from 0 to 100:
+- If fewer than 40% of required skills are found → score below 40
+- If fewer than 20% are found → score below 25
+- Only give >70 if strong match
 
 Resume:
 {resume_text}
 
 Return output in this exact format:
 
+Resume Skills:
+- ...
+
 Required Skills for {job_role}:
-- skill1
-- skill2
 - ...
 
-Skills Found in Resume:
-- skill1
-- skill2
+Matched Skills:
 - ...
 
-Missing Important Skills:
-- skill1
-- skill2
+Missing Skills:
 - ...
 
-ATS Match Score (0–100):
+ATS Match Score:
 <number>
 
 Why this score:
-<short justification>
+<short explanation>
 
-3 Resume Improvements:
-- rewrite or add bullets to improve match
+3 Resume Improvement Suggestions:
+- ...
 
 Final Hiring Decision:
 Reject / Consider / Strongly Recommend
 """
     return prompt
+
