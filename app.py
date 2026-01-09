@@ -8,20 +8,37 @@ client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 st.title("AI Resume Reviewer")
 
-uploaded_file = st.file_uploader("Upload your resume (PDF or DOCX)")
+# Resume Upload
+resume_file = st.file_uploader("Upload your resume (PDF or DOCX)", type=["pdf", "docx"])
 
 job_role = st.text_input("Enter Job Role (e.g., ML Engineer, VLSI Engineer, Data Analyst)")
 
-st.markdown("Job Description")
-job_description = st.text_area("If you have a job description, paste it here (optional)")
+st.markdown("### Job Description")
+
+jd_text = st.text_area("Paste Job Description ")
+
+jd_file = st.file_uploader("Or upload Job Description (PDF, DOCX, or TXT)", type=["pdf", "docx", "txt"])
+
+def extract_jd_text(file):
+    if file is None:
+        return ""
+    if file.name.endswith(".txt"):
+        return file.read().decode("utf-8")
+    else:
+        return extract_resume_text(file)
 
 if st.button("Analyze Resume"):
-    if uploaded_file and job_role:
-        resume_text = extract_resume_text(uploaded_file)
+    if resume_file and job_role:
+        resume_text = extract_resume_text(resume_file)
 
-        # Choose JD or job role
-        if job_description.strip() != "":
-            context = f"Job Description:\n{job_description}"
+        jd_content = ""
+        if jd_file:
+            jd_content = extract_jd_text(jd_file)
+        elif jd_text.strip() != "":
+            jd_content = jd_text
+
+        if jd_content.strip() != "":
+            context = f"Job Description:\n{jd_content}"
         else:
             context = f"Job Role:\n{job_role}"
 
