@@ -26,6 +26,12 @@ Resume:
 
 Return output in this exact format:
 
+ATS Match Score:
+<number>
+
+Why this score:
+<short explanation>
+
 Resume Skills:
 - ...
 
@@ -38,12 +44,6 @@ Matched Skills:
 Missing Skills:
 - ...
 
-ATS Match Score:
-<number>
-
-Why this score:
-<short explanation>
-
 3 Resume Improvement Suggestions:
 - ...
 
@@ -51,4 +51,5 @@ Final Hiring Decision:
 Reject / Consider / Strongly Recommend
 """
     return prompt
+
 
