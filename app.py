@@ -4,20 +4,30 @@ from resume_parser import extract_resume_text
 from prompt import get_resume_prompt
 import os
 
+# Initialize Groq client
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
+# ---------------- UI ----------------
+
 st.title("AI Resume Reviewer")
+st.markdown("**Fields marked with * are required**")
 
 # Resume Upload
-resume_file = st.file_uploader("Upload your resume (PDF or DOCX)", type=["pdf", "docx"])
+resume_file = st.file_uploader("Upload your resume * (PDF or DOCX)", type=["pdf", "docx"])
 
-job_role = st.text_input("Enter Job Role (e.g., ML Engineer, VLSI Engineer, Data Analyst)")
+# Job Role (Required)
+job_role = st.text_input("Job Role * (e.g., ML Engineer, VLSI Engineer, Data Analyst)")
 
 st.markdown("### Job Description")
 
-jd_text = st.text_area("Paste Job Description ")
+# JD Paste (Optional)
+jd_text = st.text_area("Paste job description")
 
-jd_file = st.file_uploader("Or upload Job Description (PDF, DOCX, or TXT)", type=["pdf", "docx", "txt"])
+# JD Upload (Optional)
+jd_file = st.file_uploader("Or upload job description (PDF, DOCX, or TXT)", type=["pdf", "docx", "txt"])
+
+
+# ---------------- Helper ----------------
 
 def extract_jd_text(file):
     if file is None:
@@ -27,16 +37,21 @@ def extract_jd_text(file):
     else:
         return extract_resume_text(file)
 
+
+# ---------------- Analyze ----------------
+
 if st.button("Analyze Resume"):
     if resume_file and job_role:
         resume_text = extract_resume_text(resume_file)
 
+        # Get JD content if provided
         jd_content = ""
         if jd_file:
             jd_content = extract_jd_text(jd_file)
         elif jd_text.strip() != "":
             jd_content = jd_text
 
+        # Choose context: JD > Job Role
         if jd_content.strip() != "":
             context = f"Job Description:\n{jd_content}"
         else:
@@ -47,11 +62,15 @@ if st.button("Analyze Resume"):
         with st.spinner("Analyzing..."):
             completion = client.chat.completions.create(
                 model="llama-3.1-8b-instant",
-                messages=[{"role": "user", "content": prompt}]
+                messages=[
+                    {"role": "user", "content": prompt}
+                ]
             )
 
             result = completion.choices[0].message.content
+
             st.subheader("AI Analysis")
             st.write(result)
+
     else:
-        st.warning("Please upload a resume and enter job role.")
+        st.warning("Please upload a resume and enter the job role.")
