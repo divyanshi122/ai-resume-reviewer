@@ -12,7 +12,7 @@ uploaded_file = st.file_uploader("Upload your resume (PDF or DOCX)")
 
 job_role = st.text_input("Enter Job Role (e.g., ML Engineer, VLSI Engineer, Data Analyst)")
 
-st.markdown("### Optional: Paste Job Description")
+st.markdown("Job Description")
 job_description = st.text_area("If you have a job description, paste it here (optional)")
 
 if st.button("Analyze Resume"):
